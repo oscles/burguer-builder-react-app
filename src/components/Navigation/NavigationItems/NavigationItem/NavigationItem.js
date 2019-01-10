@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+import React from 'react';
+import {NavLink} from "react-router-dom";
+
+import classes from './NavigationItem.css';
+
+const navigationItem = (props) => (
+	<li className={classes.NavigationItem}>
+		<NavLink
+			activeClassName={classes.active}
+			exact={props.active}
+			to={props.link}>{props.children}</NavLink>
+	</li>
+);
+
+export default navigationItem;
