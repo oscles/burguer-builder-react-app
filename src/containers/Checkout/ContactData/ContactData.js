@@ -9,8 +9,6 @@ import Input from "../../../components/UI/Input/Input";
 import withErrorHandler from "../../../hoc/withErrorHandler/withErrorHandler";
 import * as orderActions from '../../../store/actions/index';
 
-
-
 class ContactData extends Component {
     state = {
         orderForm: {
@@ -104,12 +102,22 @@ class ContactData extends Component {
             isValid = value.length >= rules.minLength && isValid;
         if (rules.maxLength)
             isValid = value.length <= rules.maxLength && isValid;
+
+        if (rules.isEmail) {
+            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+            isValid = pattern.test(value) && isValid
+        }
+
+        if (rules.isNumeric) {
+            const pattern = /^\d+$/;
+            isValid = pattern.test(value) && isValid
+        }
+
         return isValid;
     }
 
     orderHandler = (event) => {
         event.preventDefault();
-
         const orderData = {};
         for (let identifier in this.state.orderForm)
             orderData[identifier] = this.state.orderForm[identifier].value;
