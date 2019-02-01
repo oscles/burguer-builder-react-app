@@ -31,7 +31,14 @@ class BurgerBuilder extends Component {
         return sum > 0;
     }
 
-    purshaseHandler = () => this.setState({purchasing: true})
+    purshaseHandler = () => {
+        if (this.props.isAuthenticated) {
+            this.setState({purchasing: true});
+        } else {
+            this.props.onSetAuthRedirectPath('/checkout');
+            this.props.history.push('/auth');
+        }
+    }
 
     purshaseCancelHandler = () => this.setState({purchasing: false})
 
@@ -46,7 +53,7 @@ class BurgerBuilder extends Component {
             disableInfo[key] = disableInfo[key] <= 0;
 
         let orderSummary = null;
-        let burger =  this.props.error ? <p>The ingredients can't be loaded!</p> : <Spinner/>;
+        let burger = this.props.error ? <p>The ingredients can't be loaded!</p> : <Spinner/>;
 
         if (this.props.ingredients) {
             burger = (
@@ -59,6 +66,7 @@ class BurgerBuilder extends Component {
                         purchaseable={this.updatePurchaseState(this.props.ingredients)}
                         ingredientRemoved={this.props.onIngredientRemoved}
                         ingredientAdded={this.props.onIngredientAdded}
+                        isAuth={this.props.isAuthenticated}
                         price={this.props.totalPrice}/>
                 </AuxWrapper>
             );
@@ -86,7 +94,8 @@ const mapStateToProps = state => {
     return {
         ingredients: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
-        error: state.burgerBuilder.error
+        error: state.burgerBuilder.error,
+        isAuthenticated: state.auth.token !== null,
     }
 };
 
@@ -96,6 +105,7 @@ const mapDispatchToProps = dispatch => {
         onIngredientRemoved: (ingName) => dispatch(actions.removeIngredient(ingName)),
         onInitIngredients: () => dispatch(actions.initIngredients()),
         onInitPurchase: () => dispatch(actions.purchaseInit()),
+        onSetAuthRedirectPath: (path) => dispatch(actions.setAuthRedirectPath(path))
     }
 };
 
